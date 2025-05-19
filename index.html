@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -10,13 +9,14 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
+      font-family: Arial, sans-serif;
     }
     iframe {
       position: absolute;
-      top: 100px;
+      top: 130px;
       left: 0;
       width: 100%;
-      height: calc(100% - 100px);
+      height: calc(100% - 130px);
       border: none;
     }
     .gestao {
@@ -24,10 +24,9 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 100px;
-      background: #000;
+      height: 130px;
+      background: #111;
       color: #fff;
-      font-family: sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -35,17 +34,91 @@
       box-sizing: border-box;
       z-index: 9999;
     }
-    .gestao h2 {
-      margin: 0;
-      font-size: 18px;
+    .gestao input {
+      width: 80px;
+      padding: 5px;
+      font-size: 16px;
+    }
+    .buttons, .valores, .historico {
+      margin-top: 5px;
+    }
+    button {
+      margin-right: 8px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="gestao">
-    <h2>Banca Inicial: R$60</h2>
-    <p>Entrada 1: R$2.00 | Gale 1: R$4.00 | Gale 2: R$8.00</p>
+    <div>
+      Banca: R$ <input type="number" id="banca" value="60" onchange="atualizaValores()"> 
+      <button onclick="ajustarBanca(-1)">-</button>
+      <button onclick="ajustarBanca(1)">+</button>
+    </div>
+    <div class="valores" id="valores">Entrada 1: R$2.00 | Gale 1: R$4.00 | Gale 2: R$8.00</div>
+    <div class="buttons">
+      <button onclick="registrarWin()">✅ WIN</button>
+      <button onclick="registrarLoss()">❌ LOSS</button>
+      <button onclick="resetar()">🔄 RESET</button>
+    </div>
+    <div class="historico" id="historico">Histórico:</div>
   </div>
   <iframe src="https://trade.polariumbroker.com/register?aff=437288&aff_model=revenue&afftrack="></iframe>
+
+  <script>
+    let step = 0;
+    let historico = [];
+    let bancaAtual = 60;
+
+    function atualizaValores() {
+      let banca = parseFloat(document.getElementById("banca").value);
+      bancaAtual = banca;
+      document.getElementById("valores").innerText = 
+        `Entrada 1: R$${(banca * 0.0333).toFixed(2)} | Gale 1: R$${(banca * 0.0666).toFixed(2)} | Gale 2: R$${(banca * 0.1333).toFixed(2)}`;
+    }
+
+    function ajustarBanca(valor) {
+      let input = document.getElementById("banca");
+      input.value = parseFloat(input.value) + valor;
+      atualizaValores();
+    }
+
+    function registrarWin() {
+      let ganho = [0.0333, 0.0666, 0.1333][step] * bancaAtual;
+      bancaAtual += ganho;
+      document.getElementById("banca").value = bancaAtual.toFixed(2);
+      historico.push("✅");
+      atualizarHistorico();
+      step = 0;
+      atualizaValores();
+    }
+
+    function registrarLoss() {
+      let perda = [0.0333, 0.0666, 0.1333][step] * bancaAtual;
+      bancaAtual -= perda;
+      document.getElementById("banca").value = bancaAtual.toFixed(2);
+      historico.push("❌");
+      atualizarHistorico();
+      step = (step + 1) % 3;
+      atualizaValores();
+    }
+
+    function atualizarHistorico() {
+      document.getElementById("historico").innerText = "Histórico: " + historico.slice(-10).join("");
+    }
+
+    function resetar() {
+      step = 0;
+      historico = [];
+      document.getElementById("banca").value = "60";
+      bancaAtual = 60;
+      atualizarHistorico();
+      atualizaValores();
+    }
+
+    atualizaValores();
+  </script>
 </body>
 </html>
