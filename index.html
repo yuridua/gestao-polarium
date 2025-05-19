@@ -1,372 +1,51 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gestão Completa de Banca - Polarium</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f4f8;
-    margin: 0; padding: 0;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 20px;
-  }
-  h1, h2 {
-    text-align: center;
-    color: #0057b8;
-  }
-  .card {
-    background: white;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-  label {
-    font-weight: 600;
-    display: block;
-    margin-top: 10px;
-  }
-  input[type=number], input[type=text], button, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  button {
-    background-color: #0057b8;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
-    transition: background-color 0.3s ease;
-    margin-top: 15px;
-  }
-  button:hover {
-    background-color: #003f7d;
-  }
-  .btn-success {
-    background-color: #28a745 !important;
-  }
-  .btn-fail {
-    background-color: #dc3545 !important;
-    margin-left: 10px;
-  }
-  .btn-group button {
-    width: auto;
-    margin-top: 0;
-    padding: 8px 15px;
-  }
-  .hidden {
-    display: none !important;
-  }
-  .saldo {
-    font-size: 24px;
-    font-weight: 700;
-    color: #004080;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  .history-item {
-    border-bottom: 1px solid #ddd;
-    padding: 8px 0;
-  }
-  .history-item:last-child {
-    border-bottom: none;
-  }
-  .history-win {
-    color: green;
-    font-weight: 700;
-  }
-  .history-lose {
-    color: red;
-    font-weight: 700;
-  }
-  .round-info {
-    margin-bottom: 15px;
-    font-weight: 600;
-  }
-  @media (max-width: 480px) {
-    body {
-      padding: 10px;
+  <meta charset="UTF-8">
+  <title>Gestão Polarium</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
     }
-  }
-</style>
+    iframe {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 100px);
+      border: none;
+    }
+    .gestao {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      background: #000;
+      color: #fff;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+      z-index: 9999;
+    }
+    .gestao h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
-
-<h1>Gestão de Banca - Polarium</h1>
-
-<div id="loginCard" class="card">
-  <h2>Login / Cadastro</h2>
-  <label for="usernameInput">Nome do Trader:</label>
-  <input type="text" id="usernameInput" placeholder="Digite seu nome" />
-  <button id="btnLogin">Entrar</button>
-</div>
-
-<div id="mainApp" class="hidden">
-  <div class="card">
-    <div class="saldo">Saldo Atual: R$ <span id="saldoAtual">0.00</span></div>
-    <label for="depositoInicial">Depósito Inicial (mínimo R$60):</label>
-    <input type="number" id="depositoInicial" min="60" step="0.01" />
-
-    <label for="percentEntrada">Percentual da banca para entrada inicial (%):</label>
-    <input type="number" id="percentEntrada" min="1" max="100" step="0.1" value="5" />
-
-    <button id="btnIniciar">Iniciar Rodada</button>
+  <div class="gestao">
+    <h2>Banca Inicial: R$60</h2>
+    <p>Entrada 1: R$2.00 | Gale 1: R$4.00 | Gale 2: R$8.00</p>
   </div>
-
-  <div id="rodadaCard" class="card hidden">
-    <h2>Rodada Atual</h2>
-    <div class="round-info">Entrada 1: R$ <span id="valorEntrada1">0.00</span></div>
-    <div class="btn-group">
-      <button class="btn-success" onclick="registrarResultado('entrada1', true)">Venceu</button>
-      <button class="btn-fail" onclick="registrarResultado('entrada1', false)">Perdeu</button>
-    </div>
-
-    <div id="gale1Group" class="hidden">
-      <div class="round-info">Gale 1: R$ <span id="valorGale1">0.00</span></div>
-      <div class="btn-group">
-        <button class="btn-success" onclick="registrarResultado('gale1', true)">Venceu</button>
-        <button class="btn-fail" onclick="registrarResultado('gale1', false)">Perdeu</button>
-      </div>
-    </div>
-
-    <div id="gale2Group" class="hidden">
-      <div class="round-info">Gale 2: R$ <span id="valorGale2">0.00</span></div>
-      <div class="btn-group">
-        <button class="btn-success" onclick="registrarResultado('gale2', true)">Venceu</button>
-        <button class="btn-fail" onclick="registrarResultado('gale2', false)">Perdeu</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Histórico de Rodadas</h2>
-    <div id="historico"></div>
-    <button id="btnLimparHistorico" style="background:#888; margin-top:10px;">Limpar Histórico</button>
-  </div>
-</div>
-
-<script>
-  // Variáveis globais
-  let saldo = 0;
-  let entrada1 = 0;
-  let gale1 = 0;
-  let gale2 = 0;
-  let estadoRodada = 'inicial'; // inicial, gale1, gale2
-  let historicoRodadas = [];
-
-  // Usuário atual
-  let usuarioAtual = null;
-
-  // Elementos DOM
-  const loginCard = document.getElementById('loginCard');
-  const mainApp = document.getElementById('mainApp');
-  const saldoSpan = document.getElementById('saldoAtual');
-  const depositoInicialInput = document.getElementById('depositoInicial');
-  const percentEntradaInput = document.getElementById('percentEntrada');
-  const btnIniciar = document.getElementById('btnIniciar');
-  const rodadaCard = document.getElementById('rodadaCard');
-  const valorEntrada1Span = document.getElementById('valorEntrada1');
-  const valorGale1Span = document.getElementById('valorGale1');
-  const valorGale2Span = document.getElementById('valorGale2');
-  const gale1Group = document.getElementById('gale1Group');
-  const gale2Group = document.getElementById('gale2Group');
-  const historicoDiv = document.getElementById('historico');
-  const btnLimparHistorico = document.getElementById('btnLimparHistorico');
-
-  // Login e cadastro simples (localStorage por usuário)
-  document.getElementById('btnLogin').addEventListener('click', () => {
-    let nome = document.getElementById('usernameInput').value.trim();
-    if (!nome) {
-      alert('Por favor, digite seu nome para continuar.');
-      return;
-    }
-    usuarioAtual = nome;
-    carregarDadosUsuario();
-    loginCard.classList.add('hidden');
-    mainApp.classList.remove('hidden');
-  });
-
-  // Carrega dados do usuário do localStorage
-  function carregarDadosUsuario() {
-    let dados = localStorage.getItem('gestaoPolarium_'+usuarioAtual);
-    if (dados) {
-      let obj = JSON.parse(dados);
-      saldo = obj.saldo || 0;
-      historicoRodadas = obj.historico || [];
-    } else {
-      saldo = 0;
-      historicoRodadas = [];
-    }
-    atualizarInterface();
-  }
-
-  // Salva dados do usuário no localStorage
-  function salvarDadosUsuario() {
-    let obj = {
-      saldo: saldo,
-      historico: historicoRodadas
-    };
-    localStorage.setItem('gestaoPolarium_'+usuarioAtual, JSON.stringify(obj));
-  }
-
-  // Atualiza valores visuais do saldo e histórico
-  function atualizarInterface() {
-    saldoSpan.textContent = saldo.toFixed(2);
-    atualizarHistorico();
-  }
-
-  // Atualiza histórico
-  function atualizarHistorico() {
-    historicoDiv.innerHTML = '';
-    if (historicoRodadas.length === 0) {
-      historicoDiv.innerHTML = '<p>Nenhuma rodada registrada ainda.</p>';
-      return;
-    }
-    historicoRodadas.slice().reverse().forEach((rodada, i) => {
-      const div = document.createElement('div');
-      div.className = 'history-item';
-      const dataStr = new Date(rodada.data).toLocaleString();
-      let statusEntrada1 = rodada.resultados.entrada1 ? 'Venceu' : 'Perdeu';
-      let statusGale1 = rodada.resultados.gale1 === null ? '-' : (rodada.resultados.gale1 ? 'Venceu' : 'Perdeu');
-      let statusGale2 = rodada.resultados.gale2 === null ? '-' : (rodada.resultados.gale2 ? 'Venceu' : 'Perdeu');
-      div.innerHTML = `
-        <strong>Rodada #${historicoRodadas.length - i}</strong> (${dataStr})<br/>
-        Saldo inicial: R$${rodada.saldoInicial.toFixed(2)}<br/>
-        Entrada 1: R$${rodada.entrada1.toFixed(2)} - <span class="${rodada.resultados.entrada1 ? 'history-win' : 'history-lose'}">${statusEntrada1}</span><br/>
-        Gale 1: R$${rodada.gale1.toFixed(2)} - <span class="${rodada.resultados.gale1 === null ? '' : rodada.resultados.gale1 ? 'history-win' : 'history-lose'}">${statusGale1}</span><br/>
-        Gale 2: R$${rodada.gale2.toFixed(2)} - <span class="${rodada.resultados.gale2 === null ? '' : rodada.resultados.gale2 ? 'history-win' : 'history-lose'}">${statusGale2}</span><br/>
-        Resultado final: <strong>${rodada.resultadoFinal}</strong><br/>
-        Saldo após rodada: R$${rodada.saldoFinal.toFixed(2)}
-      `;
-      historicoDiv.appendChild(div);
-    });
-  }
-
-  // Iniciar rodada
-  btnIniciar.addEventListener('click', () => {
-    let deposito = parseFloat(depositoInicialInput.value);
-    if (isNaN(deposito) || deposito < 60) {
-      alert('O depósito inicial deve ser no mínimo R$60.');
-      return;
-    }
-    if (deposito > saldo && saldo > 0) {
-      if(!confirm(`Você está usando um depósito maior que seu saldo atual (${saldo.toFixed(2)}). Deseja continuar?`)){
-        return;
-      }
-    }
-
-    let perc = parseFloat(percentEntradaInput.value);
-    if (isNaN(perc) || perc <= 0 || perc > 100) {
-      alert('Digite um percentual válido para a entrada inicial.');
-      return;
-    }
-
-    saldo = deposito;
-
-    entrada1 = saldo * (perc / 100);
-    gale1 = entrada1 * 2;
-    gale2 = gale1 * 2;
-
-    valorEntrada1Span.textContent = entrada1.toFixed(2);
-    valorGale1Span.textContent = gale1.toFixed(2);
-    valorGale2Span.textContent = gale2.toFixed(2);
-
-    estadoRodada = 'inicial';
-
-    // Mostrar rodada
-    rodadaCard.classList.remove('hidden');
-    gale1Group.classList.add('hidden');
-    gale2Group.classList.add('hidden');
-
-    atualizarInterface();
-  });
-
-  // Registrar resultado de entrada ou gale
-  function registrarResultado(fase, venceu) {
-    // Guardar rodada atual em objeto temporário
-    if (!window.rodadaAtual) {
-      window.rodadaAtual = {
-        data: new Date(),
-        saldoInicial: saldo,
-        entrada1,
-        gale1,
-        gale2,
-        resultados: { entrada1: null, gale1: null, gale2: null },
-        resultadoFinal: ''
-      };
-    }
-
-    if (fase === 'entrada1') {
-      window.rodadaAtual.resultados.entrada1 = venceu;
-      if (venceu) {
-        let ganho = entrada1 * 0.9;
-        saldo += ganho;
-        window.rodadaAtual.resultadoFinal = 'Vitória na Entrada 1';
-        finalizarRodada();
-      } else {
-        saldo -= entrada1;
-        estadoRodada = 'gale1';
-        gale1Group.classList.remove('hidden');
-      }
-    } else if (fase === 'gale1') {
-      window.rodadaAtual.resultados.gale1 = venceu;
-      if (venceu) {
-        let ganho = gale1 * 0.9;
-        saldo += ganho;
-        window.rodadaAtual.resultadoFinal = 'Vitória no Gale 1';
-        finalizarRodada();
-      } else {
-        saldo -= gale1;
-        estadoRodada = 'gale2';
-        gale2Group.classList.remove('hidden');
-      }
-    } else if (fase === 'gale2') {
-      window.rodadaAtual.resultados.gale2 = venceu;
-      if (venceu) {
-        let ganho = gale2 * 0.9;
-        saldo += ganho;
-        window.rodadaAtual.resultadoFinal = 'Vitória no Gale 2';
-      } else {
-        saldo -= gale2;
-        window.rodadaAtual.resultadoFinal = 'Derrota total';
-      }
-      finalizarRodada();
-    }
-
-    atualizarInterface();
-  }
-
-  function finalizarRodada() {
-    window.rodadaAtual.saldoFinal = saldo;
-    historicoRodadas.push(window.rodadaAtual);
-    salvarDadosUsuario();
-    atualizarHistorico();
-
-    // Reset rodada
-    window.rodadaAtual = null;
-    rodadaCard.classList.add('hidden');
-    gale1Group.classList.add('hidden');
-    gale2Group.classList.add('hidden');
-  }
-
-  btnLimparHistorico.addEventListener('click', () => {
-    if (confirm('Deseja realmente limpar todo o histórico? Essa ação não pode ser desfeita.')) {
-      historicoRodadas = [];
-      salvarDadosUsuario();
-      atualizarHistorico();
-    }
-  });
-
-</script>
-
+  <iframe src="https://trade.polariumbroker.com/register?aff=437288&aff_model=revenue&afftrack="></iframe>
 </body>
 </html>
