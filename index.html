@@ -26,27 +26,67 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      overflow: auto;
-      max-height: 130px;
     }
 
-    .gestao input, .gestao button {
+    .gestao input,
+    .gestao button {
       padding: 6px 10px;
       font-size: 16px;
     }
 
     .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
       margin-top: 10px;
     }
 
-    button {
+    .btn-win,
+    .btn-loss,
+    .btn-reset {
+      padding: 8px 20px;
+      font-size: 16px;
       cursor: pointer;
-      margin-right: 8px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-win {
+      background-color: #2ecc71; /* Verde claro */
+    }
+
+    .btn-loss {
+      background-color: #e74c3c; /* Vermelho */
+    }
+
+    .btn-reset {
+      background-color: #3498db; /* Azul claro */
+    }
+
+    .btn-win:hover,
+    .btn-loss:hover,
+    .btn-reset:hover {
+      filter: brightness(0.9);
+    }
+
+    @media (max-width: 480px) {
+      .btn-win,
+      .btn-loss,
+      .btn-reset {
+        width: 100%;
+        text-align: center;
+      }
+      .buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
 
     .conteudo {
-      margin-top: 130px; /* Altura do painel */
-      height: calc(100vh - 130px);
+      margin-top: 180px; /* Altura do painel */
+      height: calc(100vh - 180px);
       width: 100%;
     }
 
@@ -68,9 +108,9 @@
     </div>
     <div id="valores">Entrada 1: R$2.00 | Gale 1: R$4.00 | Gale 2: R$8.00</div>
     <div class="buttons">
-      <button onclick="registrarWin()">✅ WIN</button>
-      <button onclick="registrarLoss()">❌ LOSS</button>
-      <button onclick="resetar()">🔄 RESET</button>
+      <button onclick="registrarWin()" class="btn-win">✅ WIN</button>
+      <button onclick="registrarLoss()" class="btn-loss">❌ LOSS</button>
+      <button onclick="resetar()" class="btn-reset">🔄 RESET</button>
     </div>
     <div id="historico">Histórico:</div>
   </div>
