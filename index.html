@@ -13,7 +13,7 @@
       background-color: #f9f9f9;
     }
     .gestao {
-      position: absolute;
+      position: fixed; /* Mantém o painel visível mesmo ao rolar */
       top: 0;
       left: 0;
       width: 100%;
@@ -87,8 +87,10 @@
     </div>
     <div id="historico">Histórico:</div>
 
-    <!-- Botão para entrar na Plataforma Polarium -->
-    <a href="https://trade.polariumbroker.com/pt/login"  target="_blank" class="login-btn">🔐 Entrar na Plataforma Polarium</a>
+    <!-- Botão para abrir a Polarium em nova aba -->
+    <a href="https://trade.polariumbroker.com/pt/login"  target="_blank" rel="noopener noreferrer" class="login-btn">
+      🔐 Entrar na Plataforma Polarium
+    </a>
   </div>
 
   <script>
