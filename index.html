@@ -1,71 +1,101 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gestão Polarium</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
       font-family: Arial, sans-serif;
-    }
-    iframe {
-      position: absolute;
-      top: 130px;
-      left: 0;
-      width: 100%;
-      height: calc(100% - 130px);
-      border: none;
+      background-color: #f9f9f9;
     }
     .gestao {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 130px;
       background: #111;
-      color: #fff;
+      color: white;
+      padding: 15px;
+      box-sizing: border-box;
+      z-index: 10;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 10px;
-      box-sizing: border-box;
-      z-index: 9999;
+      gap: 10px;
     }
-    .gestao input {
-      width: 80px;
-      padding: 5px;
+    .gestao input, .gestao button {
+      padding: 6px 10px;
       font-size: 16px;
     }
-    .buttons, .valores, .historico {
-      margin-top: 5px;
+    .buttons {
+      margin-top: 10px;
     }
     button {
-      margin-right: 8px;
-      padding: 6px 12px;
-      font-size: 14px;
       cursor: pointer;
+      margin-right: 8px;
+    }
+    .login-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: #4285f4;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .login-btn:hover {
+      background-color: #357ae8;
+    }
+    iframe {
+      position: absolute;
+      top: 220px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 220px);
+      border: none;
+    }
+    @media (max-height: 600px) {
+      iframe {
+        height: calc(100% - 180px);
+      }
+      .gestao {
+        padding-bottom: 10px;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- Painel de Controle -->
   <div class="gestao">
     <div>
       Banca: R$ <input type="number" id="banca" value="60" onchange="atualizaValores()"> 
       <button onclick="ajustarBanca(-1)">-</button>
       <button onclick="ajustarBanca(1)">+</button>
     </div>
-    <div class="valores" id="valores">Entrada 1: R$2.00 | Gale 1: R$4.00 | Gale 2: R$8.00</div>
+    <div id="valores">Entrada 1: R$2.00 | Gale 1: R$4.00 | Gale 2: R$8.00</div>
     <div class="buttons">
       <button onclick="registrarWin()">✅ WIN</button>
       <button onclick="registrarLoss()">❌ LOSS</button>
       <button onclick="resetar()">🔄 RESET</button>
     </div>
-    <div class="historico" id="historico">Histórico:</div>
+    <div id="historico">Histórico:</div>
+
+    <!-- Botão para entrar na Polarium -->
+    <a href="https://trade.polariumbroker.com/pt/login"  target="_blank" class="login-btn">🔐 Entrar na Plataforma Polarium</a>
   </div>
+
+  <!-- Área do iframe (opcional) -->
+  <!-- Se quiser manter o iframe, descomente abaixo -->
+  <!--
   <iframe src="https://trade.polariumbroker.com/register?aff=437288&aff_model=revenue&afftrack="></iframe>
+  -->
 
   <script>
     let step = 0;
@@ -74,19 +104,27 @@
 
     function atualizaValores() {
       let banca = parseFloat(document.getElementById("banca").value);
+      if (isNaN(banca) || banca <= 0) {
+        alert("Banca deve ser um valor positivo.");
+        document.getElementById("banca").value = bancaAtual.toFixed(2);
+        return;
+      }
       bancaAtual = banca;
-      document.getElementById("valores").innerText = 
-        `Entrada 1: R$${(banca * 0.0333).toFixed(2)} | Gale 1: R$${(banca * 0.0666).toFixed(2)} | Gale 2: R$${(banca * 0.1333).toFixed(2)}`;
+      const percentuais = [1 / 30, 2 / 30, 4 / 30]; // 3.33%, 6.66%, 13.33%
+      document.getElementById("valores").innerText =
+        `Entrada 1: R$${(banca * percentuais[0]).toFixed(2)} | ` +
+        `Gale 1: R$${(banca * percentuais[1]).toFixed(2)} | ` +
+        `Gale 2: R$${(banca * percentuais[2]).toFixed(2)}`;
     }
 
     function ajustarBanca(valor) {
       let input = document.getElementById("banca");
-      input.value = parseFloat(input.value) + valor;
+      input.value = (parseFloat(input.value) + valor).toFixed(2);
       atualizaValores();
     }
 
     function registrarWin() {
-      let ganho = [0.0333, 0.0666, 0.1333][step] * bancaAtual;
+      let ganho = [1 / 30, 2 / 30, 4 / 30][step] * bancaAtual;
       bancaAtual += ganho;
       document.getElementById("banca").value = bancaAtual.toFixed(2);
       historico.push("✅");
@@ -96,7 +134,7 @@
     }
 
     function registrarLoss() {
-      let perda = [0.0333, 0.0666, 0.1333][step] * bancaAtual;
+      let perda = [1 / 30, 2 / 30, 4 / 30][step] * bancaAtual;
       bancaAtual -= perda;
       document.getElementById("banca").value = bancaAtual.toFixed(2);
       historico.push("❌");
@@ -106,7 +144,7 @@
     }
 
     function atualizarHistorico() {
-      document.getElementById("historico").innerText = "Histórico: " + historico.slice(-10).join("");
+      document.getElementById("historico").innerHTML = "Histórico: " + historico.slice(-10).join(" ");
     }
 
     function resetar() {
@@ -120,5 +158,6 @@
 
     atualizaValores();
   </script>
+
 </body>
 </html>
