@@ -12,8 +12,9 @@
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
     }
+
     .gestao {
-      position: fixed; /* Mantém o painel visível mesmo ao rolar */
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -25,48 +26,34 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      overflow: auto;
+      max-height: 130px;
     }
+
     .gestao input, .gestao button {
       padding: 6px 10px;
       font-size: 16px;
     }
+
     .buttons {
       margin-top: 10px;
     }
+
     button {
       cursor: pointer;
       margin-right: 8px;
     }
-    .login-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
-      background-color: #4285f4;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-    }
-    .login-btn:hover {
-      background-color: #357ae8;
-    }
-    iframe {
-      position: absolute;
-      top: 220px;
-      left: 0;
+
+    .conteudo {
+      margin-top: 130px; /* Altura do painel */
+      height: calc(100vh - 130px);
       width: 100%;
-      height: calc(100% - 220px);
-      border: none;
     }
-    @media (max-height: 600px) {
-      iframe {
-        height: calc(100% - 180px);
-      }
-      .gestao {
-        padding-bottom: 10px;
-      }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
@@ -86,11 +73,11 @@
       <button onclick="resetar()">🔄 RESET</button>
     </div>
     <div id="historico">Histórico:</div>
+  </div>
 
-    <!-- Botão para abrir a Polarium em nova aba -->
-    <a href="https://trade.polariumbroker.com/pt/login"  target="_blank" rel="noopener noreferrer" class="login-btn">
-      🔐 Entrar na Plataforma Polarium
-    </a>
+  <!-- Conteúdo da Polarium -->
+  <div class="conteudo">
+    <iframe src="https://trade.polariumbroker.com/pt/login"></iframe> 
   </div>
 
   <script>
